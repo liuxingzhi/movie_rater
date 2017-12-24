@@ -1,0 +1,14 @@
+$def with(movies)
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<h1>some movies</h1>
+	$for movie in movies:
+	<li>
+		$movie['title'], $movie['year']
+	</li>
+</body>
+</html>

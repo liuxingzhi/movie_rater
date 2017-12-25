@@ -1,19 +1,13 @@
 import web
 
+# default port: http://127.0.0.1:8080/
+db = web.database(dbn='sqlite', db='MovieSite.db')
 render = web.template.render('templates/')
 
 urls = (
-    '/', 'index'
+    '/', 'index',
+    '/movie/(\d+)', 'movie',
 )
-movies = [
-    {'title': 'Forrest Gump',
-     'year': 1994,
-     },
-    {'title': 'Titanic',
-     'year': 1997,
-     },
-]
-
 
 class index:
     def GET(self):
@@ -21,20 +15,39 @@ class index:
         # for m in movies:
         #     page += '%s (%d)\n' % (m['title'], m['year'])
         # return page
+        movies = db.select('movie')
         return render.index(movies)
+
+class movie:
+    # def GET(self, movie_id):
+    #     movie_id = int(movie_id)
+    #     movie = db.select('movie', where='id = $movie_id', vars=locals())[0]
+    #     return render.movie(movie)
+
+    def GET(self, movie_id):
+        movie = db.select('movie', where='id=$int(movie_id)', vars=locals())[0]
+        return render.movie(movie)
+
+    # def GET(self, movie_id):
+    #     # movie_id = int(movie_id)
+    #     # movie = db.select('movie', where='id=$movie_id', vars=locals())[0]
+    #     condition = 'id=' + movie_id
+    #     movie = db.select('movie', where=condition)[0]
+    #     return render.movie(movie)
 
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
     app.run()
 
-movies = [
-    {'title': 'Forrest Gump',
-     'year': 1994,
-     },
-    {'title': 'Titanic',
-     'year': 1997,
-     },
-]
+
+# movies = [
+#     {'title': 'Forrest Gump',
+#      'year': 1994,
+#      },
+#     {'title': 'Titanic',
+#      'year': 1997,
+#      },
+# ]
 
 

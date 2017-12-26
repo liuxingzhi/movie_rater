@@ -18,15 +18,26 @@ class index:
         movies = db.select('movie')
         return render.index(movies)
 
-class movie:
-    # def GET(self, movie_id):
-    #     movie_id = int(movie_id)
-    #     movie = db.select('movie', where='id = $movie_id', vars=locals())[0]
-    #     return render.movie(movie)
+    def POST(self):
+        data = web.input()
+        # print(type(data))
+        # print(type(data.title))
+        # 用r''是为了防止 python 默认对于字符串中 % 的转义。
+        condition = r'title like"%' + data.title + r'%"'
+        # database syntax =
+        # select * from movie where title like "%搜索内容%";
+        movies = db.select('movie', where = condition)
+        return render.index(movies)
 
+class movie:
     def GET(self, movie_id):
-        movie = db.select('movie', where='id=$int(movie_id)', vars=locals())[0]
+        movie_id = int(movie_id)
+        movie = db.select('movie', where='id = $movie_id', vars=locals())[0]
         return render.movie(movie)
+
+    # def GET(self, movie_id):
+    #     movie = db.select('movie', where='id=$int(movie_id)', vars=locals())[0]
+    #     return render.movie(movie)
 
     # def GET(self, movie_id):
     #     # movie_id = int(movie_id)

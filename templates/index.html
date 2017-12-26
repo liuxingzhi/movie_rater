@@ -2,13 +2,18 @@ $def with(movies)
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>movies rater</title>
 </head>
 <body>
+	<form action="/" method = "post">
+		<input type = "text" name = "title">
+		<input type = "submit" value = "search">
+	</form>
+	<h4>welcome to my site</h4>
 	<h1>some movies</h1>
 	$for movie in movies:
-	<li>
-		$movie['title'], $movie['year'], $movie['country'], $movie['abstract']
+	<lj>
+		<a href="movie/$movie['id']"> $movie['title']</a>
 	</li>
 </body>
 </html>

@@ -2,6 +2,13 @@ import requests
 import pandas as pd
 from sqlalchemy import create_engine
 
+def get_poster(id, url):
+    pic = requests.get(url).content
+    file_name = 'poster/{id}.jpg'.format(id = id)
+    f = open(file_name, "wb")
+    f.write(pic)
+    f.close()
+
 movie_ids = set()
 
 for index in range(0, 50, 50):
@@ -39,6 +46,7 @@ for id in movie_ids:
         "countries" : ','.join(movie['countries']),
         "summary" : movie['summary'],
     })
+    get_poster(movie['id'], movie['images']['large'])
     # print(movie['title'], movie['id'])
     count += 1
     if count > 10:
@@ -46,5 +54,6 @@ for id in movie_ids:
 df = pd.DataFrame(info)
 
 engine = create_engine('sqlite:///MovieSite.db')
-df.to_sql('movie', engine, flavor='sqlite')
+df.to_sql('movie', engine, if_exists = 'replace')
+
 print(df)

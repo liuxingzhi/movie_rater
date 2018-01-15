@@ -9,7 +9,10 @@ $def with (movie)
     <p>$movie.origin</p>
     <a href = $movie.url >$movie.url</a>
     <p>$movie.rating</p>
-    <p>$movie.image</p>
+    <figure>
+        <img src="/static/poster/$(movie.id).jpg" alt="/static/poster/$(movie.id).jpg">
+        <!--<img src = '$movie.image' alt="$movie.id">-->
+    </figure>
     <p>$movie.directors</p>
     <p>$movie.casts</p>
     <p>$movie.year</p>

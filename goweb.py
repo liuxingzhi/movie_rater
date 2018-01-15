@@ -46,7 +46,6 @@ class movie:
     #     movie = db.select('movie', where=condition)[0]
     #     return render.movie(movie)
 
-
 if __name__ == "__main__":
     app = web.application(urls, globals())
     app.run()

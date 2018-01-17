@@ -1,7 +1,10 @@
 # movie_rater
 pratice project 
 
-study area: server and python crawling practice
+study area: server 
+            python crawling 
+            database
+
 
 
 

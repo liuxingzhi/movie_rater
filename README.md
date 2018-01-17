@@ -2,14 +2,14 @@
 pratice project 
 
 
-study area: server 
+study area: </br>
 
-            python crawling 
+server </br>
+python crawling </br>
+database </br>
             
-            database
-            
-
-
+</br>
+</br>
 
 
 Goal

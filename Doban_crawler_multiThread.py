@@ -37,8 +37,10 @@ def crawl_ids(write_to):
 # crawl_ids(id_csv)
 
 # help method
-def add_info(movie_ids, info):
-    for id in movie_ids:
+def add_info(que, info, lock):
+    while not que.empty():
+        id = que.get()
+        # print("running!", id)
         r = requests.get('http://api.douban.com/v2/movie/subject/%s' % id)
         if r.status_code != 200:
             continue
@@ -59,13 +61,35 @@ def add_info(movie_ids, info):
             "summary": movie['summary'],
         })
         crawl_poster(movie['id'], movie['images']['large'])
-        print(movie['title'], movie['id'])
+        # print(movie['title'], movie['id'])
+    lock.release()
 
 
 def crawl_info_from_ids(read_from):
     info = []
-    movie_ids = pd.Series.from_csv(read_from).tolist()
-    add_info(movie_ids, info)
+    que = Queue()
+    for id in pd.Series.from_csv(read_from).tolist():
+        que.put(id)
+        # print(id)
+
+    # for id in movie_ids:
+    #     add_info(id)
+    locks = []
+    for i in range(10):
+        lock = _thread.allocate_lock()
+        lock.acquire()
+        locks.append(lock)
+    for index, lock in enumerate(locks):
+        try:
+            _thread.start_new_thread(add_info, (que, info, lock))
+            # print("started a new thread")
+        except:
+            print("Error: unable to start thread")
+
+    for lock in locks:
+        while lock.locked():
+            pass
+
     df = pd.DataFrame(info)
     engine = create_engine('sqlite:///MovieSite.db')
     df.to_sql('movie', engine, if_exists='replace')

@@ -9,6 +9,7 @@ urls = (
     '/movie/(\d+)', 'movie',
 )
 
+
 class index:
     def GET(self):
         # page = ''

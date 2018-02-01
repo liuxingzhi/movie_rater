@@ -1,9 +1,6 @@
 import requests
 import pandas as pd
 from sqlalchemy import create_engine
-from queue import Queue
-# from threading import Thread
-import _thread
 
 id_csv = "movie_ids.csv"
 
@@ -17,10 +14,11 @@ def crawl_poster(id, url):
 
 
 def crawl_ids(write_to):
-    doban = 'http://api.douban.com/v2/movie/top250?start=%d&count=50'
+    doban = 'http://api.douban.com/v2/movie/top250'  # 参数: ?start=%d&count=50'
     movie_ids = set()
-    for index in range(0, 50, 50):
-        response = requests.get(doban % index)
+    for index in range(0, 250, 50):
+        params = {'start': index, 'count': 50}
+        response = requests.get(doban, params=params)
         data = response.json()
         # print(type(data))
         movies = data['subjects']
@@ -29,12 +27,11 @@ def crawl_ids(write_to):
             # print(movie)
             movie_ids.add(movie['id'])
     print(movie_ids)
+    print("ids in total", len(movie_ids))
     id_list = list(movie_ids)
     id_series = pd.Series(id_list)
     id_series.to_csv(write_to)
 
-
-# crawl_ids(id_csv)
 
 # help method
 def add_info(movie_ids, info):
@@ -73,7 +70,8 @@ def crawl_info_from_ids(read_from):
 
 
 def main():
-    crawl_info_from_ids(id_csv)
+    crawl_ids(id_csv)
+    # crawl_info_from_ids(id_csv)
 
 
 if __name__ == '__main__':

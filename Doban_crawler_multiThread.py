@@ -19,7 +19,7 @@ def crawl_poster(id, url):
 def crawl_ids(write_to):
     doban = 'http://api.douban.com/v2/movie/top250?start=%d&count=50'
     movie_ids = set()
-    for index in range(0, 50, 50):
+    for index in range(0, 250, 50):
         response = requests.get(doban % index)
         data = response.json()
         # print(type(data))
@@ -28,7 +28,9 @@ def crawl_ids(write_to):
             # print(movie['id'], movie['title'])
             # print(movie)
             movie_ids.add(movie['id'])
-    print(movie_ids)
+        print("I am crawling", len(movie_ids))
+    # print(movie_ids)
+    # print(len(movie_ids))
     id_list = list(movie_ids)
     id_series = pd.Series(id_list)
     id_series.to_csv(write_to)
@@ -36,17 +38,23 @@ def crawl_ids(write_to):
 
 # crawl_ids(id_csv)
 
+count = 0
+
+
 # help method
 def add_info(que, info, lock):
+    global count
     while not que.empty():
         id = que.get()
         # print("running!", id)
         r = requests.get('http://api.douban.com/v2/movie/subject/%s' % id)
         if r.status_code != 200:
+            count += 1
+            print("failed", count)
             continue
         movie = r.json()
         # print(id)
-        info.append({
+        info.put({
             "id": int(movie['id']),
             "title": movie['title'],
             "origin": movie['original_title'],
@@ -66,12 +74,12 @@ def add_info(que, info, lock):
 
 
 def crawl_info_from_ids(read_from):
-    info = []
+    info = Queue()
     que = Queue()
     for id in pd.Series.from_csv(read_from).tolist():
         que.put(id)
         # print(id)
-
+    print("there are ids in total", que.qsize())
     # for id in movie_ids:
     #     add_info(id)
     locks = []
@@ -82,7 +90,7 @@ def crawl_info_from_ids(read_from):
     for index, lock in enumerate(locks):
         try:
             _thread.start_new_thread(add_info, (que, info, lock))
-            # print("started a new thread")
+            print("started a new thread", index)
         except:
             print("Error: unable to start thread")
 
@@ -90,13 +98,17 @@ def crawl_info_from_ids(read_from):
         while lock.locked():
             pass
 
-    df = pd.DataFrame(info)
+    li = []
+    for i in range(info.qsize()):
+        li.append(info.get())
+    df = pd.DataFrame(li)
     engine = create_engine('sqlite:///MovieSite.db')
     df.to_sql('movie', engine, if_exists='replace')
     print("this is dataframe", df)
 
 
 def main():
+    # crawl_ids(id_csv)
     crawl_info_from_ids(id_csv)
 
 

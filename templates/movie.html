@@ -13,7 +13,16 @@ $def with (movie)
         <img src="/static/poster/$(movie.id).jpg" alt="/static/poster/$(movie.id).jpg">
         <!--<img src = '$movie.image' alt="$movie.id">-->
     </figure>
-    <p>$movie.directors</p>
+    $for director in movie.directors.split(','):
+    <p>directors:
+        <a href="/director/$director">$director</a>
+    </p>
+    $ casts = movie.casts.split(',');
+    <p>
+        main casts:
+        $for cast in casts:
+            <a href="/cast/$cast">$cast</a>
+    </p>
     <p>$movie.casts</p>
     <p>$movie.year</p>
     <p>$movie.genres</p>

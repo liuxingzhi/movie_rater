@@ -1,4 +1,4 @@
-$def with(movies)
+$def with(movies, count, key)
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,10 +10,18 @@ $def with(movies)
 		<input type = "submit" value = "search">
 	</form>
 	<h4>welcome to my site</h4>
-	<h1>some movies</h1>
-	$for movie in movies:
-	<lj>
-		<a href="movie/$movie['id']"> $movie['title']</a>
-	</li>
+	$if count > 0:
+		$if key:
+			<p>we find $count movies related to $key</p>
+		$else:
+			<p>There are $count movies in total</p>
+		<p>they are:</p>
+		$for movie in movies:
+		<li>
+			<a href="/movie/$movie['id']"> $movie['title']</a>
+		</li>
+	$else:
+		<p>whoops, no result find</p>
+
 </body>
 </html>

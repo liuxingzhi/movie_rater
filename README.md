@@ -19,3 +19,5 @@ Goal
 2.set up a database containing movies from doban
 
 3.give newest and most related movie info according to search info
+
+4.group movies by their casts and directors
